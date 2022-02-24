@@ -54,6 +54,7 @@ services:
       - ./dags:/opt/bitnami/airflow/dags
       - airflow_worker_data:/bitnami
       - ./requirements.txt:/bitnami/python/requirements.txt
+      - logs-volume:/opt/bitnami/airflow/logs
 
     networks:
       - movies_converter_net
@@ -72,6 +73,7 @@ services:
       - ./dags:/opt/bitnami/airflow/dags
       - airflow_data:/bitnami
       - ./requirements.txt:/bitnami/python/requirements.txt
+      - logs-volume:/opt/bitnami/airflow/logs
 
     networks:
       - movies_converter_net
@@ -90,4 +92,6 @@ volumes:
   postgresql_data:
     driver: local
   redis_data:
+    driver: local
+  logs-volume:
     driver: local
