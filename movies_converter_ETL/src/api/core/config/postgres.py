@@ -1,0 +1,36 @@
+from pydantic import BaseSettings, Field
+
+
+class PostgresSettings(BaseSettings):
+    postgres_db: str = Field("convertations", env="POSTGRES_DB")
+    postgres_host: str = Field("postgres", env="POSTGRES_HOST")
+    postgres_port: str = Field("5432", env="POSTGRES_PORT")
+    postgres_user: str = Field("convert", env="POSTGRES_USER")
+    postgres_password: str = Field("convert1456", env="POSTGRES_PASSWORD")
+
+    class Config:
+        env_file = ".env"
+
+
+def get_tortoise_config(postgres_settings: PostgresSettings = PostgresSettings()):
+    print(postgres_settings.postgres_host)
+    return {
+        "connections": {
+            "default": {
+                "engine": "tortoise.backends.asyncpg",
+                "credentials": {
+                    "host": postgres_settings.postgres_host,
+                    "port": postgres_settings.postgres_port,
+                    "database": postgres_settings.postgres_db,
+                    "user": postgres_settings.postgres_user,
+                    "password": postgres_settings.postgres_password,
+                },
+            }
+        },
+        "apps": {
+            "models": {
+                "models": ["db.postgres.models"],
+                "default_connection": "default",
+            },
+        },
+    }
