@@ -30,11 +30,12 @@ def movie_converter_etl():
         if get_config().prod_mode:
             from movies_converter_src.extract.DBMovieFilesExtractor import DBMovieFilesExtractor
 
-            movies_extactor = DBMovieFilesExtractor()
+            Extractor = DBMovieFilesExtractor
         else:
             from movies_converter_src.extract.FakeMovieFilesExtractor import FakeMovieFilesExtractor
 
-            movies_extactor = FakeMovieFilesExtractor()
+            Extractor = FakeMovieFilesExtractor
+        movies_extactor = Extractor()
         extracted_movies: Films = movies_extactor.extract_movies()
         LoggingMixin().log.info(f"Extracted {len(extracted_movies.films)} films for convertation")
 
@@ -53,12 +54,12 @@ def movie_converter_etl():
         if get_config().prod_mode:
             from movies_converter_src.transform.ApiMovieFilesTransformer import ApiMovieFilesTransformer
 
-            movie_converter = ApiMovieFilesTransformer
+            Transformer = ApiMovieFilesTransformer
         else:
             from movies_converter_src.transform.FakeMovieFilesTransformer import FakeMovieFilesTransformer
 
-        movie_converter = FakeMovieFilesTransformer(extracted_movies=extracted_movies)
-
+            Transformer = FakeMovieFilesTransformer
+        movie_converter = Transformer(extracted_movies=extracted_movies)
         transform_results: TransformResults = movie_converter.transform_movies()
         files_successed_count: int = 0
         convert_errors: int = 0
@@ -87,11 +88,12 @@ def movie_converter_etl():
         if get_config().prod_mode:
             from movies_converter_src.load.CDNMovieFilesLoader import CDNMovieFilesLoader
 
-            movie_files_loader = CDNMovieFilesLoader
+            Loader = CDNMovieFilesLoader
         else:
             from movies_converter_src.load.FakeMovieFilesLoader import FakeMovieFilesLoader
 
-            movie_files_loader = FakeMovieFilesLoader
+            Loader = FakeMovieFilesLoader
+        movie_files_loader = Loader(transform_result)
         movie_files_loader.update_movies(transform_result)
         movie_files_loader.load_movies_files(transform_result)
 

@@ -7,9 +7,7 @@ class FakeMovieFilesLoader(BaseMovieFilesLoader):
         super().__init__(transform_results, *args, **kwargs)
 
     def load_movies_files(self, *args, **kwargs):
-        # LoggingMixin().log.info(f"{self.transform_results} files loaded")
-        return
+        LoggingMixin().log.info(f"{len(self.transform_results.results)} files loaded")
 
     def update_movies(self, *args, **kwargs):
-        # LoggingMixin().log.info(f"{self.transform_results} movies updated")
-        return
+        LoggingMixin().log.info(f"{len(self.transform_results.results)} movies updated")
