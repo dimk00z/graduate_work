@@ -10,6 +10,7 @@ class Config(BaseSettings):
     display_aspect_ratio: Optional[str] = Field(None, env="DISPLAY_ASPECT_RATIO")
     fps: Optional[str] = Field(None, env="FPS")
     prod_mode: bool = Field(False, env="PROD_MODE")
+    schedule_interval: str = Field("00 12 * * *", env="SCHEDULE_INTERVAL")
 
     class Config:
         env = ".env"

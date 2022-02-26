@@ -4,9 +4,11 @@ from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
 from airflow.utils.log.logging_mixin import LoggingMixin
 
+from movies_converter_src.core.config.etl import get_config
+
 
 @dag(
-    schedule_interval="00 12 * * *",
+    schedule_interval=get_config().schedule_interval,
     start_date=days_ago(1),
     catchup=False,
     tags=["Дипломный проект ETL на стероидах"],
@@ -22,7 +24,6 @@ def movie_converter_etl():
         Загрузка данных для конвертации.
         На выходе str(JSON), т.к. используется XCOM интерфейс Airflow
         """
-        from movies_converter_src.core.config.etl import get_config
         from movies_converter_src.extract.BaseMovieFilesExtractor import BaseMovieFilesExtractor
         from movies_converter_src.models.film import Films
 
@@ -46,7 +47,6 @@ def movie_converter_etl():
         """
         Конвертация фильмов
         """
-        from movies_converter_src.core.config.etl import get_config
         from movies_converter_src.models.film import TransformResults
         from movies_converter_src.transform.BaseMovieFilesTransformer import BaseMovieFilesTransformer
 
@@ -81,7 +81,6 @@ def movie_converter_etl():
         """
         Загрузка файлов и сохранение данных
         """
-        from movies_converter_src.core.config.etl import get_config
         from movies_converter_src.load.BaseMovieFilesLoader import BaseMovieFilesLoader
 
         movie_files_loader: BaseMovieFilesLoader = None
