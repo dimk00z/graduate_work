@@ -1,5 +1,4 @@
 import logging
-from random import choice
 from typing import List
 
 from movies_converter_src.models.film import FilmFile, TransformResult, TransformResults
@@ -17,11 +16,7 @@ class FakeMovieFilesTransformer(BaseMovieFilesTransformer):
                 TransformResult(
                     film_id=film.film_id,
                     film_files=[
-                        FilmFile(
-                            resolution=resolution,
-                            succeded=choice((True, False)),
-                            destination_path=f"{resolution}_{film.file_name}",
-                        )
+                        FilmFile(resolution=resolution, destination_path=f"{resolution}_{film.file_name}")
                         for resolution in film.resolutions
                     ],
                 )
