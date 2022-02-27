@@ -1,6 +1,5 @@
 import logging
 from random import choice
-from typing import List
 
 from movies_converter_src.models.film import FilmFile, TransformResult, TransformResults
 from movies_converter_src.transform.BaseMovieFilesTransformer import BaseMovieFilesTransformer
