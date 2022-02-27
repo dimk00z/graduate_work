@@ -54,7 +54,6 @@ env/
 # auto generated docs
 doc.html
 
-postgres/
 static/
 staticfiles/
 .vscode/

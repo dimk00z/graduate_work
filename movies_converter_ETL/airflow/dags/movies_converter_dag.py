@@ -3,7 +3,6 @@ from webbrowser import get
 from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
 from airflow.utils.log.logging_mixin import LoggingMixin
-
 from movies_converter_src.core.config.etl import get_config
 
 
@@ -26,15 +25,12 @@ def movie_converter_etl():
         """
         from movies_converter_src.extract.BaseMovieFilesExtractor import BaseMovieFilesExtractor
         from movies_converter_src.models.film import Films
-
         movies_extactor: BaseMovieFilesExtractor = None
         if get_config().prod_mode:
             from movies_converter_src.extract.DBMovieFilesExtractor import DBMovieFilesExtractor
-
             Extractor = DBMovieFilesExtractor
         else:
             from movies_converter_src.extract.FakeMovieFilesExtractor import FakeMovieFilesExtractor
-
             Extractor = FakeMovieFilesExtractor
         movies_extactor = Extractor()
         extracted_movies: Films = movies_extactor.extract_movies()
@@ -81,7 +77,18 @@ def movie_converter_etl():
         """
         Загрузка файлов и сохранение данных
         """
-        from movies_converter_src.load.BaseMovieFilesLoader import BaseMovieFilesLoader
+        from movies_converter_src.load.BaseMovieFilesLoader import \
+            BaseMovieFilesLoader
+
+        movie_files_loader: BaseMovieFilesLoader = None
+        if get_config().prod_mode:
+            from movies_converter_src.load.CDNMovieFilesLoader import \
+                CDNMovieFilesLoader
+
+            Loader = CDNMovieFilesLoader
+        else:
+            from movies_converter_src.load.FakeMovieFilesLoader import \
+                FakeMovieFilesLoader
 
         movie_files_loader: BaseMovieFilesLoader = None
         if get_config().prod_mode:
@@ -90,7 +97,6 @@ def movie_converter_etl():
             Loader = CDNMovieFilesLoader
         else:
             from movies_converter_src.load.FakeMovieFilesLoader import FakeMovieFilesLoader
-
             Loader = FakeMovieFilesLoader
         movie_files_loader = Loader(transform_result)
         movie_files_loader.update_movies(transform_result)
