@@ -23,26 +23,18 @@ def movie_converter_etl():
         Загрузка данных для конвертации.
         На выходе str(JSON), т.к. используется XCOM интерфейс Airflow
         """
-        from movies_converter_src.extract.BaseMovieFilesExtractor import \
-            BaseMovieFilesExtractor
+        from movies_converter_src.extract.BaseMovieFilesExtractor import BaseMovieFilesExtractor
         from movies_converter_src.models.film import Films
-
         movies_extactor: BaseMovieFilesExtractor = None
         if get_config().prod_mode:
-            from movies_converter_src.extract.DBMovieFilesExtractor import \
-                DBMovieFilesExtractor
-
+            from movies_converter_src.extract.DBMovieFilesExtractor import DBMovieFilesExtractor
             Extractor = DBMovieFilesExtractor
         else:
-            from movies_converter_src.extract.FakeMovieFilesExtractor import \
-                FakeMovieFilesExtractor
-
+            from movies_converter_src.extract.FakeMovieFilesExtractor import FakeMovieFilesExtractor
             Extractor = FakeMovieFilesExtractor
         movies_extactor = Extractor()
         extracted_movies: Films = movies_extactor.extract_movies()
-        LoggingMixin().log.info(
-            f"Extracted {len(extracted_movies.films)} films for convertation"
-        )
+        LoggingMixin().log.info(f"Extracted {len(extracted_movies.films)} films for convertation")
 
         return extracted_movies.json()
 
@@ -52,18 +44,15 @@ def movie_converter_etl():
         Конвертация фильмов
         """
         from movies_converter_src.models.film import TransformResults
-        from movies_converter_src.transform.BaseMovieFilesTransformer import \
-            BaseMovieFilesTransformer
+        from movies_converter_src.transform.BaseMovieFilesTransformer import BaseMovieFilesTransformer
 
         movie_converter: BaseMovieFilesTransformer = None
         if get_config().prod_mode:
-            from movies_converter_src.transform.ApiMovieFilesTransformer import \
-                ApiMovieFilesTransformer
+            from movies_converter_src.transform.ApiMovieFilesTransformer import ApiMovieFilesTransformer
 
             Transformer = ApiMovieFilesTransformer
         else:
-            from movies_converter_src.transform.FakeMovieFilesTransformer import \
-                FakeMovieFilesTransformer
+            from movies_converter_src.transform.FakeMovieFilesTransformer import FakeMovieFilesTransformer
 
             Transformer = FakeMovieFilesTransformer
         movie_converter = Transformer(extracted_movies=extracted_movies)
@@ -74,16 +63,10 @@ def movie_converter_etl():
         for film in transform_results.results:
             total_files += len(film.film_files)
 
-            files_successed_count += len(
-                [file for file in film.film_files if file.succeded]
-            )
-            convert_errors += len(
-                [file for file in film.film_files if not file.succeded]
-            )
+            files_successed_count += len([file for file in film.film_files if file.succeded])
+            convert_errors += len([file for file in film.film_files if not file.succeded])
 
-        LoggingMixin().log.info(
-            f"Converted {total_files} files for {len(transform_results.results)} films"
-        )
+        LoggingMixin().log.info(f"Converted {total_files} files for {len(transform_results.results)} films")
         LoggingMixin().log.info(f"Succesed {files_successed_count}")
         LoggingMixin().log.info(f"Errors {convert_errors}")
 
@@ -107,6 +90,13 @@ def movie_converter_etl():
             from movies_converter_src.load.FakeMovieFilesLoader import \
                 FakeMovieFilesLoader
 
+        movie_files_loader: BaseMovieFilesLoader = None
+        if get_config().prod_mode:
+            from movies_converter_src.load.CDNMovieFilesLoader import CDNMovieFilesLoader
+
+            Loader = CDNMovieFilesLoader
+        else:
+            from movies_converter_src.load.FakeMovieFilesLoader import FakeMovieFilesLoader
             Loader = FakeMovieFilesLoader
         movie_files_loader = Loader(transform_result)
         movie_files_loader.update_movies(transform_result)
