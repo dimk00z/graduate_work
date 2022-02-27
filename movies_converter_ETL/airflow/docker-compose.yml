@@ -12,7 +12,7 @@ services:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
-      - movies_converter_net
+      - etl-net
   
   redis:
     image: docker.io/bitnami/redis:6.0
@@ -22,7 +22,7 @@ services:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
-      - movies_converter_net
+      - etl-net
   
   airflow-scheduler:
     image: docker.io/bitnami/airflow-scheduler:2
@@ -39,7 +39,7 @@ services:
       - ./requirements.txt:/bitnami/python/requirements.txt
 
     networks:
-      - movies_converter_net
+      - etl-net
   
   airflow-worker:
     image: docker.io/bitnami/airflow-worker:2
@@ -57,7 +57,7 @@ services:
       - logs-volume:/opt/bitnami/airflow/logs
 
     networks:
-      - movies_converter_net
+      - etl-net
   
   airflow:
     image: docker.io/bitnami/airflow:2
@@ -76,10 +76,10 @@ services:
       - logs-volume:/opt/bitnami/airflow/logs
 
     networks:
-      - movies_converter_net
+      - etl-net
 
 networks:
-  movies_converter_net:
+  etl-net:
     driver: bridge
 
 volumes:
