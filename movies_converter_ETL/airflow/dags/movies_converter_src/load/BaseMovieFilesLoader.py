@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from airflow.utils.log.logging_mixin import LoggingMixin
-from movies_converter_src.models.film import TransformResults
+from movies_converter_src.models.film import LoaderResults, TransformResults
 
 
 class BaseMovieFilesLoader(ABC):
@@ -12,9 +12,5 @@ class BaseMovieFilesLoader(ABC):
         LoggingMixin().log.info(transform_results)
 
     @abstractmethod
-    def load_movies_files(self, *args, **kwargs):
-        raise NotImplementedError("func load_movies_files should have been implemented")
-
-    @abstractmethod
-    def update_movies(self, *args, **kwargs):
-        raise NotImplementedError("func update_movies should have been implemented")
+    def load(self, *args, **kwargs) -> LoaderResults:
+        raise NotImplementedError("func load should have been implemented")
