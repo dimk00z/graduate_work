@@ -10,6 +10,7 @@ class DBConfig(BaseSettings):
     postgres_port: str = Field("5432", env="POSTGRES_PORT")
     postgres_user: str = Field("postgres", env="POSTGRES_USER")
     postgres_password: str = Field("1234", env="POSTGRES_PASSWORD")
+    query_location: str = Field("sql/extract.sql", env="QUERY_LOCATION")
 
     class Config:
         env = ".env"
