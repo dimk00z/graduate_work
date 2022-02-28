@@ -39,7 +39,6 @@ class DBMovieFilesExtractor(BaseMovieFilesExtractor):
                 extracted_movies = cursor.fetchall()
         except psycopg2.OperationalError as e:
             logger.exception(e)
-            # raise
 
     def extract_movies(self, *args, **kwargs) -> Films:
         films: List[Film] = []
