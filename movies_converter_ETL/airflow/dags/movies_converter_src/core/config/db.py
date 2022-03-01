@@ -5,11 +5,11 @@ from pydantic import BaseSettings, Field
 
 
 class DBConfig(BaseSettings):
-    postgres_db: str = Field("online_movie_theater_db", env="POSTGRES_DB")
-    postgres_host: str = Field("postges_movie_db", env="POSTGRES_HOST")
+    postgres_db: str = Field("bitnami_airflow", env="POSTGRES_DB")
+    postgres_host: str = Field("postgresql", env="POSTGRES_HOST")
     postgres_port: str = Field("5432", env="POSTGRES_PORT")
-    postgres_user: str = Field("postgres", env="POSTGRES_USER")
-    postgres_password: str = Field("1234", env="POSTGRES_PASSWORD")
+    postgres_user: str = Field("bn_airflow", env="POSTGRES_USER")
+    postgres_password: str = Field("bitnami1", env="POSTGRES_PASSWORD")
     query_location: str = Field("sql/extract.sql", env="QUERY_LOCATION")
 
     class Config:
