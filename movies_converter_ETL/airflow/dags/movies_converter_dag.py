@@ -3,11 +3,9 @@ from webbrowser import get
 
 from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
-from airflow.utils.log.logging_mixin import LoggingMixin
 
 from movies_converter_src.core.config.etl import get_config
-
-logger: Logger = LoggingMixin().log
+from movies_converter_src.core.logger.logger import logger
 
 
 @dag(

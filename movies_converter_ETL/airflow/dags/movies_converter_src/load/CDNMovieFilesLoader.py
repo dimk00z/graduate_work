@@ -7,6 +7,12 @@ class CDNMovieFilesLoader(BaseMovieFilesLoader):
     def __init__(self, transform_results: str, *args, **kwargs) -> None:
         super().__init__(transform_results, *args, **kwargs)
 
+    def _update_db(self):
+        pass
+
+    def _upload_to_storage(self):
+        pass
+
     def load(self, *args, **kwargs) -> LoaderResults:
         return LoaderResults(
             loaded_files=len(self.transform_results.results),

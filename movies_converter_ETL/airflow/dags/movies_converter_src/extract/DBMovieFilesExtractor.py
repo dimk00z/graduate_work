@@ -1,16 +1,13 @@
-from logging import Logger
 from pathlib import Path
 from random import choice
 from typing import List
 from uuid import UUID, uuid4
 
 import psycopg2
-from airflow.utils.log.logging_mixin import LoggingMixin
 from movies_converter_src.core.config.db import DBConfig, get_converter_db_config
+from movies_converter_src.core.logger.logger import logger
 from movies_converter_src.extract.BaseMovieFilesExtractor import BaseMovieFilesExtractor
 from movies_converter_src.models.film import Film, Films
-
-logger: Logger = LoggingMixin().log
 
 
 class DBMovieFilesExtractor(BaseMovieFilesExtractor):

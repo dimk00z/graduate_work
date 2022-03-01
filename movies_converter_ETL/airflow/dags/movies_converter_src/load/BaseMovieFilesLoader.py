@@ -6,10 +6,8 @@ from movies_converter_src.models.film import LoaderResults, TransformResults
 
 class BaseMovieFilesLoader(ABC):
     def __init__(self, transform_results: str, *args, **kwargs) -> None:
-        LoggingMixin().log.info("Loader started")
 
         self.transform_results: TransformResults = TransformResults.parse_raw(transform_results)
-        LoggingMixin().log.info(transform_results)
 
     @abstractmethod
     def load(self, *args, **kwargs) -> LoaderResults:
