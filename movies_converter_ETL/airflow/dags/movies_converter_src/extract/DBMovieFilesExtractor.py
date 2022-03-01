@@ -42,7 +42,8 @@ class DBMovieFilesExtractor(BaseMovieFilesExtractor):
 
     def extract_movies(self, *args, **kwargs) -> Films:
         films: List[Film] = []
-        extracted_movies = self._fetch_db()
+        extracted_movies = self._fetch_db() or []
+
         for movie_row in extracted_movies:
             films.append(
                 Film(
