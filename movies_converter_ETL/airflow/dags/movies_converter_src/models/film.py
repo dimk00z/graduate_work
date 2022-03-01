@@ -20,7 +20,7 @@ class Films(BaseModel):
 
 
 class FilmFile(BaseModel):
-    resolution: str
+    resolution: int
     destination_path: str
     succeded: bool
 
