@@ -2,8 +2,9 @@ from webbrowser import get
 
 from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
-from airflow.utils.log.logging_mixin import LoggingMixin
+
 from movies_converter_src.core.config.etl import get_config
+from movies_converter_src.core.logger.logger import logger
 
 
 @dag(
@@ -23,18 +24,26 @@ def movie_converter_etl():
         Загрузка данных для конвертации.
         На выходе str(JSON), т.к. используется XCOM интерфейс Airflow
         """
-        from movies_converter_src.extract.BaseMovieFilesExtractor import BaseMovieFilesExtractor
+        from movies_converter_src.extract.BaseMovieFilesExtractor import \
+            BaseMovieFilesExtractor
         from movies_converter_src.models.film import Films
+
+        logger.info("Exctractor started")
         movies_extactor: BaseMovieFilesExtractor = None
         if get_config().prod_mode:
-            from movies_converter_src.extract.DBMovieFilesExtractor import DBMovieFilesExtractor
+            from movies_converter_src.extract.DBMovieFilesExtractor import \
+                DBMovieFilesExtractor
+
             Extractor = DBMovieFilesExtractor
         else:
-            from movies_converter_src.extract.FakeMovieFilesExtractor import FakeMovieFilesExtractor
+            from movies_converter_src.extract.FakeMovieFilesExtractor import \
+                FakeMovieFilesExtractor
+
             Extractor = FakeMovieFilesExtractor
         movies_extactor = Extractor()
         extracted_movies: Films = movies_extactor.extract_movies()
-        LoggingMixin().log.info(f"Extracted {len(extracted_movies.films)} films for convertation")
+        logger.info("Extracted %d films for convertation", len(extracted_movies.films))
+        logger.info("Exctractor finished")
 
         return extracted_movies.json()
 
@@ -44,15 +53,20 @@ def movie_converter_etl():
         Конвертация фильмов
         """
         from movies_converter_src.models.film import TransformResults
-        from movies_converter_src.transform.BaseMovieFilesTransformer import BaseMovieFilesTransformer
+        from movies_converter_src.transform.BaseMovieFilesTransformer import \
+            BaseMovieFilesTransformer
+
+        logger.info("Transformer started")
 
         movie_converter: BaseMovieFilesTransformer = None
         if get_config().prod_mode:
-            from movies_converter_src.transform.ApiMovieFilesTransformer import ApiMovieFilesTransformer
+            from movies_converter_src.transform.ApiMovieFilesTransformer import \
+                ApiMovieFilesTransformer
 
             Transformer = ApiMovieFilesTransformer
         else:
-            from movies_converter_src.transform.FakeMovieFilesTransformer import FakeMovieFilesTransformer
+            from movies_converter_src.transform.FakeMovieFilesTransformer import \
+                FakeMovieFilesTransformer
 
             Transformer = FakeMovieFilesTransformer
         movie_converter = Transformer(extracted_movies=extracted_movies)
@@ -66,9 +80,14 @@ def movie_converter_etl():
             files_successed_count += len([file for file in film.film_files if file.succeded])
             convert_errors += len([file for file in film.film_files if not file.succeded])
 
-        LoggingMixin().log.info(f"Converted {total_files} files for {len(transform_results.results)} films")
-        LoggingMixin().log.info(f"Succesed {files_successed_count}")
-        LoggingMixin().log.info(f"Errors {convert_errors}")
+        logger.info(
+            "Converted %d files for %d films",
+            total_files,
+            len(transform_results.results),
+        )
+        logger.info("Succesed %d", files_successed_count)
+        logger.info("Errors %d", convert_errors)
+        logger.info("Transformer finished")
 
         return transform_results.json()
 
@@ -79,6 +98,9 @@ def movie_converter_etl():
         """
         from movies_converter_src.load.BaseMovieFilesLoader import \
             BaseMovieFilesLoader
+        from movies_converter_src.models.film import LoaderResults
+
+        logger.info("Loader started")
 
         movie_files_loader: BaseMovieFilesLoader = None
         if get_config().prod_mode:
@@ -92,15 +114,19 @@ def movie_converter_etl():
 
         movie_files_loader: BaseMovieFilesLoader = None
         if get_config().prod_mode:
-            from movies_converter_src.load.CDNMovieFilesLoader import CDNMovieFilesLoader
+            from movies_converter_src.load.CDNMovieFilesLoader import \
+                CDNMovieFilesLoader
 
             Loader = CDNMovieFilesLoader
         else:
-            from movies_converter_src.load.FakeMovieFilesLoader import FakeMovieFilesLoader
+            from movies_converter_src.load.FakeMovieFilesLoader import \
+                FakeMovieFilesLoader
+
             Loader = FakeMovieFilesLoader
         movie_files_loader = Loader(transform_result)
-        movie_files_loader.update_movies(transform_result)
-        movie_files_loader.load_movies_files(transform_result)
+        loader_results: LoaderResults = movie_files_loader.load(transform_result)
+        logger.info("%d movies updated", loader_results.updated_movies)
+        logger.info("Loader finished")
 
     extracted_movies = extract()
     transform_results = transform(extracted_movies)

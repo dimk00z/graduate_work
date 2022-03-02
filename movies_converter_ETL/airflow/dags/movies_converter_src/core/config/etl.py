@@ -1,16 +1,14 @@
 from functools import lru_cache
-from typing import Optional
+from typing import List
 
 from pydantic import BaseSettings, Field
 
 
 class Config(BaseSettings):
-    convert_api_host: str = Field("convert_api:8000", env="CONVERT_API_HOST")
-    codec_name: Optional[str] = Field(None, env="CODEC_NAME")
-    display_aspect_ratio: Optional[str] = Field(None, env="DISPLAY_ASPECT_RATIO")
-    fps: Optional[str] = Field(None, env="FPS")
-    prod_mode: bool = Field(False, env="PROD_MODE")
+    # prod_mode: bool = Field(False, env="PROD_MODE")
+    prod_mode: bool = Field(True, env="PROD_MODE")
     schedule_interval: str = Field("00 12 * * *", env="SCHEDULE_INTERVAL")
+    resolutions: List[int] = Field([2160, 1440, 1080, 720, 480, 360, 240, 120], env="RESOLUTIONS")
 
     class Config:
         env = ".env"

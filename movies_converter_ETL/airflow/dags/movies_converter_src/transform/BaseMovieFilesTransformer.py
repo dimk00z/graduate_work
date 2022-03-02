@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from movies_converter_src.models.film import Films
-from movies_converter_src.models.film import TransformResults
+from movies_converter_src.models.film import Films, TransformResults
 
 
 class BaseMovieFilesTransformer(ABC):
@@ -10,4 +9,5 @@ class BaseMovieFilesTransformer(ABC):
 
     @abstractmethod
     def transform_movies(self, *args, **kwargs) -> TransformResults:
+        "Main transform|convert func"
         raise NotImplementedError("func transform_movies should have been implemented")

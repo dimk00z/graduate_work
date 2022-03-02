@@ -8,8 +8,9 @@ from pydantic import BaseModel
 class Film(BaseModel):
     "Event for sending notification"
     film_id: UUID
-    resolutions: List[str]
     file_name: str
+    reqired_resolutions: List[int]
+    source_resolution: int
     source_path: str
     destination_path: str
 
@@ -19,7 +20,7 @@ class Films(BaseModel):
 
 
 class FilmFile(BaseModel):
-    resolution: str
+    resolution: int
     destination_path: str
     succeded: bool
 
@@ -31,3 +32,9 @@ class TransformResult(BaseModel):
 
 class TransformResults(BaseModel):
     results: List[TransformResult]
+
+
+class LoaderResults(BaseModel):
+    errors: List[str] = []
+    loaded_files: int
+    updated_movies: int

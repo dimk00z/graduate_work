@@ -1,26 +1,63 @@
-from typing import List
-from uuid import uuid4
+from pathlib import Path
+from random import choice
+from typing import Any, List, Optional
+from uuid import UUID, uuid4
 
+import psycopg2
+from movies_converter_src.core.config.db import DBConfig, get_converter_db_config
+from movies_converter_src.core.logger.logger import logger
 from movies_converter_src.extract.BaseMovieFilesExtractor import BaseMovieFilesExtractor
 from movies_converter_src.models.film import Film, Films
 
 
-class FakeMovieFilesExtractor(BaseMovieFilesExtractor):
-    def __init__(self, movies_len: int = 20) -> None:
-        self.movies_len = movies_len
+class DBMovieFilesExtractor(BaseMovieFilesExtractor):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        db_config: DBConfig = get_converter_db_config()
+        self.dsn = {
+            "dbname": db_config.postgres_db,
+            "user": db_config.postgres_user,
+            "password": db_config.postgres_password,
+            "host": db_config.postgres_host,
+            "port": db_config.postgres_port,
+            "options": "-c search_path=content",
+        }
+        query_path: Path = Path(Path(__file__).parent.resolve(), Path(db_config.extract_query_location))
+
+        with open(query_path) as query_file:
+            self.query: str = query_file.read()
+
+        logger.info(self.query)
+
+    def _fetch_db(self) -> List[Any]:
+        try:
+            with psycopg2.connect(**self.dsn) as conn, conn.cursor() as cursor:
+                cursor.execute(self.query)
+                extracted_movies = cursor.fetchall()
+                logger.info(type(extracted_movies))
+                return extracted_movies
+        except psycopg2.OperationalError as e:
+            logger.exception(e)
+        return []
 
     def extract_movies(self, *args, **kwargs) -> Films:
-        resolutions: List[str] = ["2160p", "1440p", "1080p", "720p", "480p", "360p", "240p", "120p"]
-        extracted_films: Films = Films(
-            films=[
+        films: List[Film] = []
+        extracted_movies: List[Any] = self._fetch_db()
+
+        for movie_row in extracted_movies:
+            films.append(
                 Film(
-                    film_id=uuid4(),
-                    file_name=f"movie_{index}.mkv",
-                    destination_path="/cinema/movies/converted/",
-                    source_path="/cinema/movies/",
-                    resolutions=resolutions,
+                    film_id=UUID(movie_row["fw_id"]),
+                    file_name=movie_row["file_name"],
+                    reqired_resolutions=[
+                        resolution
+                        for resolution in self.resolutions
+                        if resolution not in movie_row["resolutions"]
+                    ],
+                    source_resolution=movie_row["source_resolution"],
+                    source_path=movie_row["source_path"],
+                    destination_path=movie_row["destination_path"],
                 )
-                for index in range(self.movies_len)
-            ]
-        )
-        return extracted_films
+            )
+
+        return Films(films=films)
