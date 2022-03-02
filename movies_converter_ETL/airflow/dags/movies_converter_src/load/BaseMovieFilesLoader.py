@@ -11,4 +11,5 @@ class BaseMovieFilesLoader(ABC):
 
     @abstractmethod
     def load(self, *args, **kwargs) -> LoaderResults:
+        "Main loader func"
         raise NotImplementedError("func load should have been implemented")

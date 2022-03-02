@@ -9,4 +9,5 @@ class BaseMovieFilesTransformer(ABC):
 
     @abstractmethod
     def transform_movies(self, *args, **kwargs) -> TransformResults:
+        "Main transform|convert func"
         raise NotImplementedError("func transform_movies should have been implemented")

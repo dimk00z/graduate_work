@@ -19,6 +19,7 @@ class ApiMovieFilesTransformer(BaseMovieFilesTransformer):
         self.config: ConverterAPIConfig = get_converter_API_config()
 
     def _convert_file(self, film: Film, resolution: int) -> FilmFile:
+        "Отправка запросов на API для конвертацию файлов"
         result: FilmFile = FilmFile(
             resolution=resolution, destination_path=film.destination_path, succeded=False
         )
@@ -52,6 +53,7 @@ class ApiMovieFilesTransformer(BaseMovieFilesTransformer):
         return TransformResult(film_id=film.film_id, film_files=film_files)
 
     def transform_movies(self, *args, **kwargs) -> TransformResults:
+
         logging.debug(self.extracted_movies)
         results: List[TransformResult] = [
             self._convert_movie(film=film) for film in self.extracted_movies.films
