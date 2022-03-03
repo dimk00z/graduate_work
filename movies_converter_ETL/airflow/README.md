@@ -23,7 +23,7 @@ docker-compose up
 ### Описание работы
 
 Используется TaskFlow API Aiflow
-В [DAG](https://github.com/dimk00z/graduate_work/blob/dev/movies_converter_ETL/airflow/dags/movies_converter_dag.py) реализованы следующие таски:
+В [DAG](dags/movies_converter_dag.py) реализованы следующие таски:
 
 1. `Load` - загрузка информации о файлах фильном для конвертации
 
