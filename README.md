@@ -25,12 +25,12 @@ ETL хорош всем, но ему не хватает гибкости. Не�
 
 
 ### Архитектура
-
+<img src="architecture.png">
 
 * API для конвертации файлов `movies_converter_API`. 
 Подробное описание в директории [movies_converter_API](https://github.com/dimk00z/graduate_work/tree/main/movies_converter_API)
 
-* ETL pipeline `delivery_api`. 
+* ETL pipeline `movies_converter_ETL`. 
 Подробное описание в директории [movies_converter_ETL](https://github.com/dimk00z/graduate_work/tree/aiflow-init/movies_converter_ETL/airflow)
 
 
