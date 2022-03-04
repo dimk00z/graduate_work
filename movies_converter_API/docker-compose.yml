@@ -1,0 +1,38 @@
+version: '3.7'
+
+volumes:
+  postgres_volume:
+
+services:
+  postgres:
+    image: postgres:13
+    hostname: postgres
+    container_name: postgres
+    volumes:
+      - "postgres_volume:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    env_file:
+      - ".env"
+    networks:
+      - etl-net
+
+  api:
+    hostname: api
+    container_name: api
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8001:8001"
+    env_file:
+      - ".env"
+    networks:
+      - etl-net
+
+networks:
+  etl-net:
+    name: etl-net
+    driver: bridge
