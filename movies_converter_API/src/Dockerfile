@@ -1,4 +1,4 @@
-FROM python:3.9.7-slim-buster
+FROM python:3.9.9-slim-buster
 
 EXPOSE 8001
 
@@ -14,4 +14,5 @@ CMD gunicorn \
     -k uvicorn.workers.UvicornWorker \
     -b 0.0.0.0:8001 \
     --log-level debug \
+    --workers 1 \
     main:app
