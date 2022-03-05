@@ -1,3 +1,4 @@
+-- скрипт на добавление записей о конвертации
 INSERT
     INTO
         content.film_files (

@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 from logging import Logger
 from random import choice
 from typing import List, Optional
@@ -37,7 +38,7 @@ class ApiMovieFilesTransformer(BaseMovieFilesTransformer):
         try:
             response = http_get(self.config.convert_api_host, params=params)
             response.raise_for_status()
-            if response.status_code != 200:
+            if response.status_code != HTTPStatus.OK:
                 return result
             result.succeded = result.json()["result"]
 

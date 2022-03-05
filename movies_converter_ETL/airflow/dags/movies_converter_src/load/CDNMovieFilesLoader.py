@@ -57,6 +57,7 @@ class CDNMovieFilesLoader(BaseMovieFilesLoader):
         try:
             with psycopg2.connect(**self.dsn) as conn, conn.cursor() as cursor:
                 cursor.execute(self.query)
+            conn.close()
         except psycopg2.OperationalError as e:
             logger.exception(e)
 
