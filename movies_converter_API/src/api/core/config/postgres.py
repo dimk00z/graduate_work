@@ -13,7 +13,6 @@ class PostgresSettings(BaseSettings):
 
 
 def get_tortoise_config(postgres_settings: PostgresSettings = PostgresSettings()):
-    print(postgres_settings.postgres_host)
     return {
         "connections": {
             "default": {

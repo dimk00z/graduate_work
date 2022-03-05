@@ -11,7 +11,7 @@ class DBConfig(BaseSettings):
     postgres_user: str = Field("bn_airflow", env="POSTGRES_USER")
     postgres_password: str = Field("bitnami1", env="POSTGRES_PASSWORD")
     extract_query_location: str = Field("sql/extract.sql", env="EXTRACT_QUERY_LOCATION")
-    load_query_location: str = Field("sql/load.sql", env="LOAD_QUERY_LOCATION")
+    load_query_location: str = Field("sql/insert.sql", env="LOAD_QUERY_LOCATION")
 
     class Config:
         env = ".env"
