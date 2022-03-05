@@ -36,6 +36,7 @@ class DBMovieFilesExtractor(BaseMovieFilesExtractor):
                 extracted_movies = cursor.fetchall()
                 logger.info(type(extracted_movies))
                 return extracted_movies
+            conn.close()
         except psycopg2.OperationalError as e:
             logger.exception(e)
         return []
