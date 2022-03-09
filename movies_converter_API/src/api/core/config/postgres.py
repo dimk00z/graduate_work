@@ -4,7 +4,7 @@ from pydantic import BaseSettings, Field
 class PostgresSettings(BaseSettings):
     postgres_db: str = Field("convertations", env="POSTGRES_DB")
     postgres_host: str = Field("postgres", env="POSTGRES_HOST")
-    postgres_port: str = Field("5432", env="POSTGRES_PORT")
+    postgres_port: int = Field(5432, env="POSTGRES_PORT")
     postgres_user: str = Field("convert", env="POSTGRES_USER")
     postgres_password: str = Field("convert1456", env="POSTGRES_PASSWORD")
 

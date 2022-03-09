@@ -2,6 +2,7 @@ version: '3.7'
 
 volumes:
   postgres_volume:
+  movie_data:
 
 services:
   postgres:
@@ -23,6 +24,8 @@ services:
     build:
       context: ./src
       dockerfile: Dockerfile
+    volumes:
+      - "movie_data:/data"
     depends_on:
       - postgres
     ports:

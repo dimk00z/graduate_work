@@ -5,7 +5,6 @@ from tortoise.transactions import in_transaction
 async def create_convertation(convertation_to_create: Convertation) -> Convertation:
     async with in_transaction() as tr:
         res_ = await Convertation.create(
-            id=convertation_to_create.id,
             source_path=convertation_to_create.source_path,
             destination_path=convertation_to_create.destination_path,
             resolution=convertation_to_create.resolution,

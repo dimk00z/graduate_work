@@ -1,3 +1,4 @@
+import uuid
 from enum import Enum
 
 from tortoise import fields
@@ -10,7 +11,7 @@ class Convertation(Model):
         CREATE_ERROR = "CREATE_ERROR"
         RENDER_ERROR = "RENDER_ERROR"
 
-    id = fields.UUIDField(pk=True)
+    id = fields.UUIDField(pk=True, default=uuid.uuid4, unique=True, nullable=False,)
     source_path = fields.TextField(null=False)
     destination_path = fields.TextField(null=False)
     resolution = fields.TextField(null=False)
